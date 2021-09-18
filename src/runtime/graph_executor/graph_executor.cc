@@ -58,7 +58,11 @@ inline size_t GetDataAlignment(const DLTensor& arr) {
 void GraphExecutor::Run() {
   // setup the array and requirements.
   for (size_t i = 0; i < op_execs_.size(); ++i) {
+    auto t1 = std::chrono::high_resolution_clock::now();
     if (op_execs_[i]) op_execs_[i]();
+    auto t2 = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
+    std::cout << "takes: " << duration/1000.0  << " milliseconds" << std::endl;
   }
 }
 
@@ -338,8 +342,10 @@ void GraphExecutor::SetupStorage() {
     if (!attrs_.device_index.empty()) {
       device_type = attrs_.device_index[i];
     }
+    std::cout << "shape: " << std::endl;
     size_t size = 1;
     for (int64_t sz : attrs_.shape[i]) {
+      std::cout << sz << std::endl;
       size *= static_cast<size_t>(sz);
     }
     ICHECK_GE(storage_id, 0) << "Do not support runtime shape op";

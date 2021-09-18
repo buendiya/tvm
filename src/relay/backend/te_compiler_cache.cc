@@ -146,6 +146,7 @@ class ScheduleBuilder : public backend::MemoizedExprTranslator<Array<te::Tensor>
     if (prim_fn_name != "__copy") {
       prim_fn_name = renamer(prim_fn_name);
     }
+    // std::cout << "CachedFunc::Create " << prim_fn_name << std::endl;
     auto prim_fn_var = GlobalVar(prim_fn_name);
     prim_fn_var->checked_type_ = prim_func->checked_type();
 

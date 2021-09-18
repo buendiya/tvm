@@ -41,6 +41,8 @@ namespace tvm {
 namespace codegen {
 
 runtime::Module Build(IRModule mod, Target target) {
+  std::cout << "mod: " << mod << std::endl;
+  std::cout << "target: " << target << std::endl;
   if (transform::PassContext::Current()
           ->GetConfig<Bool>("tir.disable_assert", Bool(false))
           .value()) {
@@ -51,7 +53,9 @@ runtime::Module Build(IRModule mod, Target target) {
   std::string build_f_name = "target.build." + target->kind->name;
   const PackedFunc* bf = runtime::Registry::Get(build_f_name);
   ICHECK(bf != nullptr) << build_f_name << " is not enabled";
-  return (*bf)(mod, target);
+  runtime::Module runtime_mod = (*bf)(mod, target);
+  // std::cout << "runtime_mod: " << runtime_mod->GetSource() << std::endl;
+  return runtime_mod;
 }
 
 /*! \brief Helper class to serialize module */

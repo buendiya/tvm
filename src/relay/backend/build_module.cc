@@ -281,6 +281,7 @@ class RelayBuildModule : public runtime::ModuleNode {
   void Build(IRModule mod, const TargetsMap& targets, const tvm::Target& target_host,
              const String executor, const String mod_name) {
     // Create protected variable targets_ from ground up
+    std::cout << "targets: " << targets << std::endl;
     targets_ = targets;
     target_host_ = target_host;
     executor_ = executor;
@@ -530,6 +531,7 @@ class RelayBuildModule : public runtime::ModuleNode {
         ret_.mod = tvm::codegen::CSourceModuleCreate(";", "", Array<String>{});
       }
     } else {
+      std::cout << "lowered_funcs: " << lowered_funcs << std::endl;
       ret_.mod = tvm::build(lowered_funcs, target_host_);
     }
 

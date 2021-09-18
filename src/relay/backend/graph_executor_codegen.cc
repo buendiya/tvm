@@ -235,6 +235,7 @@ class GraphExecutorCodegen : public backend::MemoizedExprTranslator<std::vector<
           // lowering process directly.
           tec::UpdateFunctionMetadata(func, this->function_metadata_);
         })(mod);
+    std::cout << "lowered_mod: " << lowered_mod << std::endl;
 
     Optional<backend::FunctionInfo> main_func_info =
         lowered_mod->GetAttr<backend::FunctionInfo>("main_func_info");

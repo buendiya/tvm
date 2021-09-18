@@ -615,8 +615,11 @@ def _local_build_worker(inp_serialized, build_func, verbose):
 
     try:
         sch, args = task.compute_dag.apply_steps_from_state(
-            inp.state, layout_rewrite=task.layout_rewrite_option
+            inp.state
         )
+        # print("layout_rewrite: ", task.layout_rewrite_option)
+        print("transform_steps: ", str(inp.state.transform_steps))
+        print("Lowered TIR:\n", tvm.lower(sch, args, simple_mode=True))
     # pylint: disable=broad-except
     except Exception:
         error_no = MeasureErrorNo.INSTANTIATION_ERROR
@@ -921,14 +924,18 @@ def _timed_eval_func(
                 else:
                     args[idx] = ndarray.array(args[idx], dev)
             dev.sync()
+            print(build_res.filename, [a.shape for a in args])
             costs = time_f(*args).results
+            print("costs: ", costs)
+            if sum(costs) / len(costs) < 0.001:
+                print("costs little than 0.001")
         # pylint: disable=broad-except
         except Exception:
             costs = (MAX_FLOAT,)
             error_no = MeasureErrorNo.RUNTIME_DEVICE
             error_msg = make_traceback_info()
 
-    shutil.rmtree(os.path.dirname(build_res.filename))
+    # shutil.rmtree(os.path.dirname(build_res.filename))
     toc = time.time()
     time.sleep(cooldown_interval)
 

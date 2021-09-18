@@ -357,7 +357,9 @@ def auto_schedule_topi(func_name, outs):
         if state is None:
             return None
 
-        schedule, _ = dag.apply_steps_from_state(state)
+        schedule, args_ = dag.apply_steps_from_state(state)
+        print("transform_steps: ", str(state.transform_steps))
+        print("Lowered TIR:\n", tvm.lower(schedule, args_, simple_mode=True))
         return schedule
 
     if env.tracing_mode in [TracingMode.EXTRACT_TASK, TracingMode.EXTRACT_COMPLEX_TASK_ONLY]:

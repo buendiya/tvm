@@ -487,22 +487,25 @@ runtime::Module build(const Map<Target, IRModule>& inputs_arg, const Target& tar
 
   for (const auto& it : inputs) {
     if (it.second.defined()) {
+      std::cout << "it.second->functions.size(): " << it.second->functions.size() << std::endl;
       auto pair = SplitDevHostFuncs(it.second, it.first, target_host, pass_ctx);
       auto& mhost = pair.first;
       auto& mdevice = pair.second;
+      std::cout << "mdevice->functions.size(): " << mdevice->functions.size() << std::endl;
+      std::cout << "mhost->functions.size(): " << mhost->functions.size() << std::endl;
 
       ICHECK(mhost.defined()) << "The split host module must be defined";
 
       ICHECK(mhost_all.defined()) << "The host module must be defined";
 
       mhost_all->Update(mhost);
-
       if (mdevice->functions.size() != 0) {
         device_modules.push_back(codegen::Build(mdevice, it.first));
       }
     }
   }
 
+  std::cout << "hehe target_host: " << target_host << std::endl;
   runtime::Module mhost = codegen::Build(mhost_all, target_host);
   // Import all modules
   for (const auto& it : device_modules) {
